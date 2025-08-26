@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Theaters</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { 
+            background: #0f172a; 
+            color: #e2e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .header { 
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); 
+            color: white; 
+            padding: 24px 0; 
+            margin-bottom: 24px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
+            gap: 16px; 
+        }
+        
+        .card { 
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 16px; 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3); 
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.4);
+            border-color: rgba(129, 140, 248, 0.3);
+        }
+        
+        .card:active {
+            transform: translateY(-2px);
+        }
+        
+        .card::after {
+            content: 'Click to Edit';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(129, 140, 248, 0.9);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .card:hover::after {
+            opacity: 1;
+        }
+        
+        .card-body {
+            color: #e2e8f0;
+        }
+        
+        .card-title { 
+            margin: 0; 
+            font-size: 1.1rem; 
+            font-weight: 600; 
+            color: #e2e8f0; 
+        }
+        
+        .meta { 
+            color: #94a3b8; 
+            font-size: .9rem; 
+        }
+        
+        .empty { 
+            text-align: center; 
+            padding: 80px 20px; 
+            color: #94a3b8; 
+        }
+        
+        .btn-light {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-light:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+            color: white;
+        }
+        
+        .text-bg-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+            color: white !important;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .loading-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(129, 140, 248, 0.3);
+            border-top: 4px solid #818cf8;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    
+    <script>
+        function editTheater(theaterId) {
+            // Show loading overlay
+            const loadingOverlay = document.getElementById('loading-overlay');
+            loadingOverlay.classList.add('show');
+            
+            // Redirect to edit page with theater ID
+            setTimeout(() => {
+                window.location.href = `/theateradmin/theatereditpage/${theaterId}`;
+            }, 500);
+        }
+        
+        // Add click event listeners to all theater cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const theaterCards = document.querySelectorAll('.theater-card');
+            theaterCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const theaterId = this.getAttribute('data-theater-id');
+                    if (theaterId) {
+                        editTheater(theaterId);
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+    
+    <div class="header">
+        <div class="container d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <a href="/theateradmin/theaterlistpage" class="text-white text-decoration-none">
+                    <h1 class="h3 m-0 fw-bold">🎬 Movie Booking</h1>
+                </a>
+                <span class="text-white-50">|</span>
+                <h2 class="h4 m-0 text-white-50">Your Theaters</h2>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <a class="btn btn-light btn-sm" th:href="@{/theateradmin/theatercreatepage}">Create Theater</a>
+                <a href="/auth/logout" class="btn btn-outline-danger btn-sm">
+                    <i class="fas fa-sign-out-alt me-1"></i>Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div th:if="${theaters != null and !theaters.isEmpty()}" class="grid">
+            <div class="card theater-card" th:each="theater : ${theaters}" th:data-theater-id="${theater.id}">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h2 class="card-title" th:text="${theater.name}">Theater Name</h2>
+                        <span class="badge text-bg-primary" th:text="${#lists.size(theater.screens)} + ' screens'">0 screens</span>
+                    </div>
+                    <div class="meta mt-2">
+                        <span class="me-3">City: <span th:text="${theater.city}">City</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${theaters == null or theaters.isEmpty()}" class="empty">
+            <h3 class="mb-2">No theaters yet</h3>
+            <p class="mb-4">Create your first theater to start adding screens and shows.</p>
+            <a class="btn btn-primary" th:href="@{/theateradmin/theatercreatepage}">Create Theater</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

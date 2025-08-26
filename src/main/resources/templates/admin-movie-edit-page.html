@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Movie - Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { 
+            background: #0f172a; 
+            color: #e2e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .card { 
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+            backdrop-filter: blur(20px);
+        }
+        
+        .card-body {
+            color: #e2e8f0;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .form-label {
+            color: #cbd5e1;
+            font-weight: 600;
+        }
+        
+        .form-control, .form-select {
+            background: rgba(51, 65, 85, 0.8);
+            border: 2px solid rgba(148, 163, 184, 0.3);
+            color: #e2e8f0;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background: rgba(51, 65, 85, 0.95);
+            border-color: #818cf8;
+            box-shadow: 0 0 0 0.2rem rgba(129, 140, 248, 0.25);
+            color: #e2e8f0;
+        }
+        
+        .form-control::placeholder {
+            color: #94a3b8;
+        }
+        
+        .form-text {
+            color: #94a3b8;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+            color: white;
+        }
+        
+        .btn-outline-secondary {
+            border: 2px solid rgba(148, 163, 184, 0.3);
+            color: #94a3b8;
+            background: transparent;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-secondary:hover {
+            background: rgba(148, 163, 184, 0.1);
+            border-color: #94a3b8;
+            color: #cbd5e1;
+        }
+        
+        .btn-light {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-light:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .img-fluid {
+            border: 2px solid rgba(148, 163, 184, 0.3);
+        }
+        
+        .movie-preview {
+            background: rgba(51, 65, 85, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+        
+        .preview-title {
+            color: #e2e8f0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .preview-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        }
+        
+        .preview-label {
+            color: #94a3b8;
+            font-weight: 500;
+        }
+        
+        .preview-value {
+            color: #e2e8f0;
+            font-weight: 600;
+        }
+        
+        .alert {
+            border-radius: 12px;
+            border: 1px solid;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-success {
+            background: rgba(34, 197, 94, 0.2);
+            border-color: rgba(34, 197, 94, 0.3);
+            color: #4ade80;
+        }
+        
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #f87171;
+        }
+    </style>
+    
+    <script>
+        function previewImage(){
+            const url = document.getElementById('imageUrl').value;
+            const img = document.getElementById('posterPreview');
+            if(url){ 
+                img.src = url; 
+                img.classList.remove('d-none'); 
+            } else { 
+                img.classList.add('d-none'); 
+            }
+        }
+        
+        function updatePreview() {
+            const title = document.getElementById('title').value;
+            const duration = document.getElementById('durationInMinutes').value;
+            const description = document.getElementById('description').value;
+            const language = document.getElementById('language').value;
+            const genre = document.getElementById('genre').value;
+            const format = document.getElementById('format').value;
+            
+            document.getElementById('preview-title').textContent = title || 'Movie Title';
+            document.getElementById('preview-duration').textContent = duration ? duration + ' minutes' : 'Not specified';
+            document.getElementById('preview-description').textContent = description || 'No description';
+            document.getElementById('preview-language').textContent = language || 'Not selected';
+            document.getElementById('preview-genre').textContent = genre || 'Not selected';
+            document.getElementById('preview-format').textContent = format || 'Not selected';
+        }
+        
+        // Update preview on form changes
+        document.addEventListener('DOMContentLoaded', function() {
+            const formInputs = document.querySelectorAll('input, select, textarea');
+            formInputs.forEach(input => {
+                input.addEventListener('input', updatePreview);
+                input.addEventListener('change', updatePreview);
+            });
+            
+            // Initial preview update
+            updatePreview();
+        });
+    </script>
+</head>
+<body>
+    <div class="header">
+        <div class="container d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <a href="/adminmoviecreator/listmoviespage" class="text-white text-decoration-none">
+                    <h1 class="h3 m-0 fw-bold">🎬 Movie Booking</h1>
+                </a>
+                <span class="text-white-50">|</span>
+                <h2 class="h4 m-0 text-white-50">Edit Movie</h2>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <a class="btn btn-light btn-sm" th:href="@{/adminmoviecreator/listmoviespage}">Back to Movies</a>
+                <a href="/auth/logout" class="btn btn-outline-danger btn-sm">
+                    <i class="fas fa-sign-out-alt me-1"></i>Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Success/Error Messages -->
+                        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+                        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+                        
+                        <form th:action="@{/adminmoviecreator/updatemovie}" method="post" novalidate>
+                            <input type="hidden" name="id" th:value="${movie.id}">
+                            
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <label for="title" class="form-label">Title</label>
+                                    <input id="title" name="title" type="text" class="form-control" 
+                                           th:value="${movie.title}" placeholder="e.g., Inception" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="durationInMinutes" class="form-label">Duration (minutes)</label>
+                                    <input id="durationInMinutes" name="durationInMinutes" type="text" class="form-control" 
+                                           th:value="${movie.durationInMinutes}" placeholder="e.g., 148" required>
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="description" class="form-label">Description</label>
+                                    <textarea id="description" name="description" rows="3" class="form-control" 
+                                              placeholder="Short synopsis" th:text="${movie.description}"></textarea>
+                                </div>
+
+                                <div class="col-md-8">
+                                    <label for="imageUrl" class="form-label">Poster Image URL</label>
+                                    <input id="imageUrl" name="imageUrl" type="text" class="form-control" 
+                                           th:value="${movie.imageUrl}" placeholder="https://..." oninput="previewImage()">
+                                    <div class="form-text">Optional. Direct link to an image.</div>
+                                </div>
+                                <div class="col-md-4 d-flex align-items-end">
+                                    <img id="posterPreview" class="img-fluid rounded d-none" alt="Poster preview" 
+                                         style="max-height: 80px;" th:if="${movie.imageUrl != null and !#strings.isEmpty(movie.imageUrl)}" 
+                                         th:src="${movie.imageUrl}">
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label for="language" class="form-label">Language</label>
+                                    <select id="language" name="language" class="form-select" required>
+                                        <option value="" disabled>Select language</option>
+                                        <option value="ENGLISH" th:selected="${movie.language == 'ENGLISH'}">ENGLISH</option>
+                                        <option value="HINDI" th:selected="${movie.language == 'HINDI'}">HINDI</option>
+                                        <option value="GUJARATI" th:selected="${movie.language == 'GUJARATI'}">GUJARATI</option>
+                                        <option value="TAMIL" th:selected="${movie.language == 'TAMIL'}">TAMIL</option>
+                                        <option value="MARATHI" th:selected="${movie.language == 'MARATHI'}">MARATHI</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="genre" class="form-label">Genre</label>
+                                    <select id="genre" name="genre" class="form-select" required>
+                                        <option value="" disabled>Select genre</option>
+                                        <option value="ACTION" th:selected="${movie.genre == 'ACTION'}">ACTION</option>
+                                        <option value="COMEDY" th:selected="${movie.genre == 'COMEDY'}">COMEDY</option>
+                                        <option value="DRAMA" th:selected="${movie.genre == 'DRAMA'}">DRAMA</option>
+                                        <option value="HORROR" th:selected="${movie.genre == 'HORROR'}">HORROR</option>
+                                        <option value="ROMANCE" th:selected="${movie.genre == 'ROMANCE'}">ROMANCE</option>
+                                        <option value="SCIENCE_FICTION" th:selected="${movie.genre == 'SCIENCE_FICTION'}">SCIENCE_FICTION</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="format" class="form-label">Format</label>
+                                    <select id="format" name="format" class="form-select" required>
+                                        <option value="" disabled>Select format</option>
+                                        <option value="TWO_D" th:selected="${movie.format == 'TWO_D'}">2D</option>
+                                        <option value="THREE_D" th:selected="${movie.format == 'THREE_D'}">3D</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-2 mt-4">
+                                <a class="btn btn-outline-secondary" th:href="@{/adminmoviecreator/listmoviespage}">Cancel</a>
+                                <button type="submit" class="btn btn-success">Update Movie</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Live Preview</h5>
+                        <div class="movie-preview">
+                            <div class="preview-title" id="preview-title">Movie Title</div>
+                            <div class="preview-item">
+                                <span class="preview-label">Duration:</span>
+                                <span class="preview-value" id="preview-duration">Not specified</span>
+                            </div>
+                            <div class="preview-item">
+                                <span class="preview-label">Description:</span>
+                                <span class="preview-value" id="preview-description">No description</span>
+                            </div>
+                            <div class="preview-item">
+                                <span class="preview-label">Language:</span>
+                                <span class="preview-value" id="preview-language">Not selected</span>
+                            </div>
+                            <div class="preview-item">
+                                <span class="preview-label">Genre:</span>
+                                <span class="preview-value" id="preview-genre">Not selected</span>
+                            </div>
+                            <div class="preview-item">
+                                <span class="preview-label">Format:</span>
+                                <span class="preview-value" id="preview-format">Not selected</span>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center">
+                            <small class="text-muted">Changes will be reflected in real-time</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

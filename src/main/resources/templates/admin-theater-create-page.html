@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Theater - Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { 
+            background: #0f172a; 
+            color: #e2e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .header { 
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); 
+            color: white; 
+            padding: 20px 0; 
+            margin-bottom: 24px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .card { 
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3); 
+            border-radius: 16px; 
+            backdrop-filter: blur(20px);
+        }
+        
+        .card-body {
+            color: #e2e8f0;
+        }
+        
+        .screen-card { 
+            border: 1px dashed rgba(148, 163, 184, 0.4); 
+            border-radius: 12px; 
+            padding: 16px; 
+            background: rgba(51, 65, 85, 0.5); 
+            margin-bottom: 1rem;
+        }
+        
+        .seat-row { 
+            display: grid; 
+            grid-template-columns: 120px 1fr auto; 
+            gap: 12px; 
+            align-items: center; 
+        }
+        
+        .badge-muted { 
+            background: rgba(129, 140, 248, 0.2); 
+            color: #818cf8; 
+            border: 1px solid rgba(129, 140, 248, 0.3);
+        }
+        
+        .empty-tip { 
+            color: #94a3b8; 
+            font-size: .9rem; 
+        }
+        
+        .btn-icon { 
+            width: 36px; 
+            height: 36px; 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        
+        .show-row { 
+            display: grid; 
+            grid-template-columns: 1.2fr 0.9fr 0.9fr 0.9fr auto; 
+            gap: 12px; 
+            align-items: center; 
+        }
+        
+        .form-label {
+            color: #cbd5e1;
+            font-weight: 600;
+        }
+        
+        .form-control, .form-select {
+            background: rgba(51, 65, 85, 0.8);
+            border: 2px solid rgba(148, 163, 184, 0.3);
+            color: #e2e8f0;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background: rgba(51, 65, 85, 0.95);
+            border-color: #818cf8;
+            box-shadow: 0 0 0 0.2rem rgba(129, 140, 248, 0.25);
+            color: #e2e8f0;
+        }
+        
+        .form-control::placeholder {
+            color: #94a3b8;
+        }
+        
+        .bg-light {
+            background: rgba(51, 65, 85, 0.5) !important;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 8px;
+        }
+        
+        .fw-semibold {
+            color: #e2e8f0;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+            color: white;
+        }
+        
+        .btn-outline-secondary {
+            border: 2px solid rgba(148, 163, 184, 0.3);
+            color: #94a3b8;
+            background: transparent;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-secondary:hover {
+            background: rgba(148, 163, 184, 0.1);
+            border-color: #94a3b8;
+            color: #cbd5e1;
+        }
+        
+        .btn-outline-danger {
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+            background: transparent;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-danger:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #f87171;
+            color: #fca5a5;
+        }
+        
+        .btn-light {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-light:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .h6 {
+            color: #e2e8f0;
+        }
+    </style>
+    <script>
+        let screenIndex = 0;
+
+        function addScreen() {
+            const screensContainer = document.getElementById('screensContainer');
+            const idx = screenIndex++;
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'screen-card mb-3';
+            wrapper.setAttribute('data-screen-index', idx);
+            wrapper.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge badge-muted">Screen</span>
+                        <input type="text" class="form-control form-control-sm" placeholder="Screen name" name="screens[${idx}].name" style="max-width: 220px">
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <input type="number" min="0" class="form-control form-control-sm" placeholder="Total seats" name="screens[${idx}].totalSeats" style="max-width: 150px">
+                        <button type="button" class="btn btn-outline-danger btn-sm btn-icon" title="Remove screen" onclick="removeScreen(this)">✕</button>
+                    </div>
+                </div>
+
+                <div class="bg-light p-2 rounded">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="fw-semibold">Seats</div>
+                        <div class="d-flex gap-2">
+                            <input type="text" class="form-control form-control-sm" placeholder="Rows e.g. A-F" id="rows-${idx}" style="max-width: 140px">
+                            <input type="number" class="form-control form-control-sm" placeholder="# per row" id="perRow-${idx}" style="max-width: 120px">
+                            <button type="button" class="btn btn-sm btn-primary" onclick="generateSeats(${idx})">Generate</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addSeat(${idx})">Add Seat</button>
+                        </div>
+                    </div>
+                    <div class="small empty-tip" id="seatsEmpty-${idx}">No seats yet. Use Generate or Add Seat.</div>
+                    <div id="seats-${idx}" class="d-flex flex-column gap-2"></div>
+                </div>
+
+                <div class="bg-light p-2 rounded mt-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="fw-semibold">Shows</div>
+                        <div>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addShow(${idx})">Add Show</button>
+                        </div>
+                    </div>
+                    <div class="small empty-tip" id="showsEmpty-${idx}">No shows yet. Click Add Show.</div>
+                    <div id="shows-${idx}" class="d-flex flex-column gap-2"></div>
+                </div>
+            `;
+            screensContainer.appendChild(wrapper);
+        }
+
+        function removeScreen(btn) {
+            const card = btn.closest('.screen-card');
+            card?.remove();
+        }
+
+        function addSeat(screenIdx, rowValue = '', seatNumValue = '') {
+            document.getElementById(`seatsEmpty-${screenIdx}`)?.classList.add('d-none');
+            const container = document.getElementById(`seats-${screenIdx}`);
+            const seatIdx = container.children.length;
+
+            const row = document.createElement('div');
+            row.className = 'seat-row';
+            row.innerHTML = `
+                <input type="text" class="form-control form-control-sm" placeholder="Row (e.g. A)" name="screens[${screenIdx}].seats[${seatIdx}].row" value="${rowValue}">
+                <input type="number" min="1" class="form-control form-control-sm" placeholder="Seat #" name="screens[${screenIdx}].seats[${seatIdx}].seatNumber" value="${seatNumValue}">
+                <button type="button" class="btn btn-outline-danger btn-sm btn-icon" onclick="this.closest('.seat-row').remove()">✕</button>
+            `;
+            container.appendChild(row);
+        }
+
+        function generateSeats(screenIdx) {
+            const rowsInput = document.getElementById(`rows-${screenIdx}`).value.trim();
+            const perRow = parseInt(document.getElementById(`perRow-${screenIdx}`).value, 10) || 0;
+            if (!rowsInput || perRow <= 0) return;
+
+            const [start, end] = rowsInput.split('-').map(s => (s || '').trim().toUpperCase());
+            if (!start || !end || start.length !== 1 || end.length !== 1) return;
+
+            const startCode = start.charCodeAt(0);
+            const endCode = end.charCodeAt(0);
+            const from = Math.min(startCode, endCode);
+            const to = Math.max(startCode, endCode);
+
+            const seatsContainer = document.getElementById(`seats-${screenIdx}`);
+            seatsContainer.innerHTML = '';
+            for (let code = from; code <= to; code++) {
+                const rowLetter = String.fromCharCode(code);
+                for (let n = 1; n <= perRow; n++) {
+                    addSeat(screenIdx, rowLetter, String(n));
+                }
+            }
+            document.getElementById(`seatsEmpty-${screenIdx}`)?.classList.add('d-none');
+        }
+
+        function addShow(screenIdx) {
+            document.getElementById(`showsEmpty-${screenIdx}`)?.classList.add('d-none');
+            const container = document.getElementById(`shows-${screenIdx}`);
+            const showIdx = container.children.length;
+            const row = document.createElement('div');
+            row.className = 'show-row';
+            row.innerHTML = `
+                <input type="text" class="form-control form-control-sm" placeholder="Movie name" name="screens[${screenIdx}].shows[${showIdx}].movie.title">
+                <input type="time" class="form-control form-control-sm" name="screens[${screenIdx}].shows[${showIdx}].showTime">
+                <input type="date" class="form-control form-control-sm" name="screens[${screenIdx}].shows[${showIdx}].showDate">
+                <input type="number" step="0.01" min="0" class="form-control form-control-sm" placeholder="Price" name="screens[${screenIdx}].shows[${showIdx}].price">
+                <button type="button" class="btn btn-outline-danger btn-sm btn-icon" onclick="this.closest('div.show-row').remove()">✕</button>
+            `;
+            container.appendChild(row);
+        }
+    </script>
+</head>
+<body>
+    <div class="header">
+        <div class="container d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <a href="/theateradmin/theaterlistpage" class="text-white text-decoration-none">
+                    <h1 class="h3 m-0 fw-bold">🎬 Movie Booking</h1>
+                </a>
+                <span class="text-white-50">|</span>
+                <h2 class="h4 m-0 text-white-50">Create Theater</h2>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <a class="btn btn-light btn-sm" th:href="@{/theateradmin/theaterlistpage}">View Theaters</a>
+                <a href="/auth/logout" class="btn btn-outline-danger btn-sm">
+                    <i class="fas fa-sign-out-alt me-1"></i>Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <div class="card">
+                    <div class="card-body">
+                        <form id="createTheaterForm" th:action="@{/theateradmin/createtheater}" method="post" novalidate>
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Theater Name</label>
+                                    <input type="text" name="name" class="form-control" placeholder="e.g., INOX City Center">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">City</label>
+                                    <input type="text" name="city" class="form-control" placeholder="e.g., Mumbai">
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="m-0">Screens</h6>
+                                <button class="btn btn-primary btn-sm" type="button" onclick="addScreen()">Add Screen</button>
+                            </div>
+                            <div id="screensContainer" class="mb-3"></div>
+
+                            <div class="d-flex justify-content-end gap-2">
+                                <a class="btn btn-outline-secondary" th:href="@{/theateradmin/theaterlistpage}">Cancel</a>
+                                <button type="submit" class="btn btn-success">Create Theater</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Normalize dynamic indices and prevent empty numeric values before submit
+        document.addEventListener('DOMContentLoaded', function(){
+            const form = document.getElementById('createTheaterForm');
+            if(!form) return;
+            form.addEventListener('submit', function(){
+                const screenCards = form.querySelectorAll('.screen-card');
+                screenCards.forEach((card, screenIdx)=>{
+                    // Remove incomplete seat rows first
+                    card.querySelectorAll('.seat-row').forEach(function(row){
+                        const rowInput = row.querySelector('input[name$=".row"]');
+                        const numInput = row.querySelector('input[name$=".seatNumber"]');
+                        if(!rowInput || !numInput || !rowInput.value.trim() || !numInput.value.trim()){
+                            row.remove();
+                        }
+                    });
+
+                    // Rewrite screen index in all input names
+                    card.querySelectorAll('input[name]').forEach(function(inp){
+                        inp.name = inp.name.replace(/screens\[\d+\]/, `screens[${screenIdx}]`);
+                    });
+
+                    // Renumber seats indices sequentially
+                    let seatIdx = 0;
+                    card.querySelectorAll('.seat-row').forEach(function(row){
+                        row.querySelectorAll('input[name]').forEach(function(inp){
+                            inp.name = inp.name.replace(/seats\[\d+\]/, `seats[${seatIdx}]`);
+                        });
+                        seatIdx++;
+                    });
+
+                    // Remove incomplete show rows and renumber
+                    card.querySelectorAll('.show-row').forEach(function(row){
+                        const title = row.querySelector('input[name$=".movie.title"]');
+                        const time = row.querySelector('input[name$=".showTime"]');
+                        const date = row.querySelector('input[name$=".showDate"]');
+                        const price = row.querySelector('input[name$=".price"]');
+                        if(!title || !time || !date || !title.value.trim() || !time.value || !date.value){
+                            row.remove();
+                        } else if(price && price.value.trim() === '') {
+                            price.value = '0';
+                        }
+                    });
+
+                    let showIdx = 0;
+                    card.querySelectorAll('.show-row').forEach(function(row){
+                        row.querySelectorAll('input[name]').forEach(function(inp){
+                            inp.name = inp.name.replace(/shows\[\d+\]/, `shows[${showIdx}]`);
+                        });
+                        showIdx++;
+                    });
+
+                    // Default empty totalSeats to 0 to avoid type mismatch
+                    const totalSeatsInput = card.querySelector('input[name$=".totalSeats"]');
+                    if(totalSeatsInput && totalSeatsInput.value.trim() === ''){
+                        totalSeatsInput.value = '0';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

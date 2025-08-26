@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 - Access Denied</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e2e8f0;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        .main-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 80px);
+            padding-top: 80px;
+        }
+        .card {
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+        .icon-wrap {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(99, 102, 241, 0.2);
+            color: #818cf8;
+            margin: 0 auto 12px;
+            box-shadow: inset 0 0 0 6px rgba(99, 102, 241, 0.1);
+            border: 2px solid rgba(99, 102, 241, 0.3);
+        }
+        .code-badge {
+            display: inline-block;
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            padding: 2px 10px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .muted { 
+            color: #94a3b8; 
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+            color: white;
+        }
+    </style>
+    <script>
+        function goBack(){
+            if (window.history.length > 1) { window.history.back(); }
+            else { window.location.href = '/auth/loginpage'; }
+        }
+    </script>
+    </head>
+<body>
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 15px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.3); position: fixed; top: 0; width: 100%; z-index: 1000;">
+        <div class="container">
+            <div class="d-flex justify-content-center align-items-center">
+                <a href="/auth/loginpage" class="text-white text-decoration-none">
+                    <h1 style="margin: 0; font-size: 1.8rem; font-weight: 700;">🎬 Movie Booking</h1>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="container px-3">
+            <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <div class="card">
+                    <div class="card-body p-4 p-sm-5 text-center">
+                        <div class="icon-wrap mb-2">
+                            <i class="fa-solid fa-lock fa-2x"></i>
+                        </div>
+                        <h1 class="h3 mb-2">Access Denied</h1>
+                        <p class="muted mb-4">You do not have permission to access this page.
+                            If you believe this is an error, please try signing in with an authorized account.</p>
+
+                        <div class="d-flex gap-2 justify-content-center">
+                            <a class="btn btn-primary" th:href="@{/auth/loginpage}">
+                                <i class="fa-solid fa-right-to-bracket me-2"></i>Go to Login
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

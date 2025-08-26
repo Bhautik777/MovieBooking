@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Theater - Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { 
+            background: #0f172a; 
+            color: #e2e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .card { 
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+            backdrop-filter: blur(20px);
+        }
+        
+        .card-body {
+            color: #e2e8f0;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .form-label {
+            color: #cbd5e1;
+            font-weight: 600;
+        }
+        
+        .form-control, .form-select {
+            background: rgba(51, 65, 85, 0.8);
+            border: 2px solid rgba(148, 163, 184, 0.3);
+            color: #e2e8f0;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background: rgba(51, 65, 85, 0.95);
+            border-color: #818cf8;
+            box-shadow: 0 0 0 0.2rem rgba(129, 140, 248, 0.25);
+            color: #e2e8f0;
+        }
+        
+        .form-control::placeholder {
+            color: #94a3b8;
+        }
+        
+        .form-text {
+            color: #94a3b8;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+            color: white;
+        }
+        
+        .btn-outline-secondary {
+            border: 2px solid rgba(148, 163, 184, 0.3);
+            color: #94a3b8;
+            background: transparent;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-secondary:hover {
+            background: rgba(148, 163, 184, 0.1);
+            border-color: #94a3b8;
+            color: #cbd5e1;
+        }
+        
+        .btn-light {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-light:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+            color: white;
+        }
+        
+        .btn-outline-danger {
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+            background: transparent;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-danger:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #f87171;
+            color: #fca5a5;
+        }
+        
+        .screen-card { 
+            border: 1px solid rgba(148, 163, 184, 0.4); 
+            background: rgba(51, 65, 85, 0.5); 
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .screen-card:hover {
+            border-color: rgba(129, 140, 248, 0.4);
+            background: rgba(51, 65, 85, 0.7);
+        }
+        
+        .screen-card.editing {
+            border-color: #10b981;
+            background: rgba(51, 65, 85, 0.8);
+        }
+        
+        .seat-row {
+            display: flex;
+            gap: 8px;
+            margin: 8px 0;
+            flex-wrap: wrap;
+        }
+        
+        .seat {
+            width: 30px;
+            height: 30px;
+            border: 2px solid #10b981;
+            background: rgba(51, 65, 85, 0.8);
+            color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .seat:hover {
+            background: rgba(16, 185, 129, 0.3);
+            transform: scale(1.1);
+        }
+        
+        .seat.selected {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+        
+        .seat.occupied {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+            cursor: not-allowed;
+        }
+        
+        .badge-muted { 
+            background: rgba(129, 140, 248, 0.2); 
+            color: #818cf8; 
+            border: 1px solid rgba(129, 140, 248, 0.3);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+        }
+        
+        .empty-tip { 
+            color: #94a3b8; 
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .show-row {
+            background: rgba(51, 65, 85, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .show-row:hover {
+            background: rgba(51, 65, 85, 0.7);
+            border-color: rgba(129, 140, 248, 0.3);
+        }
+        
+        .show-row.editing {
+            border-color: #10b981;
+            background: rgba(51, 65, 85, 0.8);
+        }
+        
+        .bg-light {
+            background: rgba(51, 65, 85, 0.5) !important;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+        
+        .fw-semibold {
+            color: #e2e8f0;
+        }
+        
+        .h6 {
+            color: #e2e8f0;
+        }
+        
+        .alert {
+            border-radius: 12px;
+            border: 1px solid;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-success {
+            background: rgba(34, 197, 94, 0.2);
+            border-color: rgba(34, 197, 94, 0.3);
+            color: #4ade80;
+        }
+        
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #f87171;
+        }
+        
+        .theater-preview {
+            background: rgba(51, 65, 85, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+        
+        .preview-title {
+            color: #e2e8f0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .preview-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        }
+        
+        .preview-label {
+            color: #94a3b8;
+            font-weight: 500;
+        }
+        
+        .preview-value {
+            color: #e2e8f0;
+            font-weight: 600;
+        }
+        
+        .edit-mode {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: #10b981;
+        }
+        
+        .hidden-inputs {
+            display: none;
+        }
+        
+        .seat-management {
+            background: rgba(51, 65, 85, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
+        }
+        
+        .seat-controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+        
+        .seat-count-input {
+            width: 80px;
+            text-align: center;
+        }
+    </style>
+    
+    <script>
+        function updatePreview() {
+            const name = document.getElementById('theaterName').value;
+            const city = document.getElementById('city').value;
+            
+            document.getElementById('preview-name').textContent = name || 'Theater Name';
+            document.getElementById('preview-city').textContent = city || 'Not selected';
+        }
+        
+        function toggleScreenEdit(screenId) {
+            const screenCard = document.getElementById(`screen-${screenId}`);
+            const viewMode = document.getElementById(`screen-view-${screenId}`);
+            const editMode = document.getElementById(`screen-edit-${screenId}`);
+            
+            if (screenCard.classList.contains('editing')) {
+                // Save changes
+                saveScreenChanges(screenId);
+                screenCard.classList.remove('editing');
+                viewMode.style.display = 'block';
+                editMode.style.display = 'none';
+            } else {
+                // Enter edit mode
+                screenCard.classList.add('editing');
+                viewMode.style.display = 'none';
+                editMode.style.display = 'block';
+            }
+        }
+        
+        function saveScreenChanges(screenId) {
+            const screenName = document.getElementById(`screen-name-${screenId}`).value;
+            const totalSeats = document.getElementById(`screen-seats-${screenId}`).value;
+            
+            // Update hidden inputs for form submission
+            document.getElementById(`screen-${screenId}-name-input`).value = screenName;
+            document.getElementById(`screen-${screenId}-seats-input`).value = totalSeats;
+            
+            // Update view mode display
+            document.getElementById(`screen-name-display-${screenId}`).textContent = `Screen ${screenName}`;
+            document.getElementById(`screen-seats-display-${screenId}`).textContent = `Total Seats: ${totalSeats}`;
+            
+            // Regenerate seat layout
+            generateSeatLayout(screenId, parseInt(totalSeats));
+        }
+        
+        function toggleShowEdit(showId) {
+            const showRow = document.getElementById(`show-${showId}`);
+            const viewMode = document.getElementById(`show-view-${showId}`);
+            const editMode = document.getElementById(`show-edit-${showId}`);
+            
+            if (showRow.classList.contains('editing')) {
+                // Save changes
+                saveShowChanges(showId);
+                showRow.classList.remove('editing');
+                viewMode.style.display = 'block';
+                editMode.style.display = 'none';
+            } else {
+                // Enter edit mode
+                showRow.classList.add('editing');
+                viewMode.style.display = 'none';
+                editMode.style.display = 'block';
+            }
+        }
+        
+        function saveShowChanges(showId) {
+            const showTime = document.getElementById(`show-time-${showId}`).value;
+            const movieTitle = document.getElementById(`show-movie-${showId}`).value;
+            
+            // Update hidden inputs for form submission
+            document.getElementById(`show-${showId}-time-input`).value = showTime;
+            document.getElementById(`show-${showId}-movie-input`).value = movieTitle;
+            
+            // Update view mode display
+            document.getElementById(`show-display-${showId}`).textContent = `${movieTitle} - ${showTime}`;
+        }
+        
+        function generateSeatLayout(screenId, totalSeats) {
+            const seatContainer = document.getElementById(`seat-layout-${screenId}`);
+            const rows = Math.ceil(totalSeats / 8);
+            const seatsPerRow = 8;
+            
+            let seatHtml = '';
+            let seatNumber = 1;
+            
+            for (let row = 1; row <= rows; row++) {
+                seatHtml += '<div class="seat-row">';
+                for (let col = 1; col <= seatsPerRow && seatNumber <= totalSeats; col++) {
+                    seatHtml += `<span class="seat" onclick="toggleSeatSelection('${screenId}-${seatNumber}')" data-seat-id="${seatNumber}">${row}-${col}</span>`;
+                    seatNumber++;
+                }
+                seatHtml += '</div>';
+            }
+            
+            seatContainer.innerHTML = seatHtml;
+            
+            // Update seat count display
+            document.getElementById(`screen-seats-display-${screenId}`).textContent = `Total Seats: ${totalSeats}`;
+            
+            // Update hidden input for total seats
+            document.getElementById(`screen-${screenId}-seats-input`).value = totalSeats;
+        }
+        
+        function toggleSeatSelection(seatId) {
+            const seat = document.querySelector(`[data-seat-id="${seatId.split('-')[1]}"]`);
+            if (seat && !seat.classList.contains('occupied')) {
+                seat.classList.toggle('selected');
+            }
+        }
+        
+        function addNewScreen() {
+            const screensContainer = document.getElementById('screens-container');
+            const screenCount = screensContainer.children.length;
+            const newScreenId = `new-screen-${screenCount}`;
+            
+            const newScreenHtml = `
+                <div class="screen-card" id="${newScreenId}">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h6 class="mb-0">New Screen</h6>
+                        <div>
+                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeNewScreen('${newScreenId}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label class="form-label">Screen Name</label>
+                            <input type="text" class="form-control" name="newScreens[${screenCount}].name" placeholder="Screen 1" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Total Seats</label>
+                            <input type="number" class="form-control" name="newScreens[${screenCount}].totalSeats" min="1" max="200" placeholder="40" required onchange="generateNewScreenSeats('${newScreenId}', this.value)">
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <small class="text-muted">Seat Layout Preview:</small>
+                        <div id="new-seat-layout-${newScreenId}"></div>
+                    </div>
+                </div>
+            `;
+            
+            screensContainer.insertAdjacentHTML('beforeend', newScreenHtml);
+        }
+        
+        function generateNewScreenSeats(screenId, totalSeats) {
+            const seatContainer = document.getElementById(`new-seat-layout-${screenId}`);
+            generateSeatLayout(screenId, parseInt(totalSeats));
+        }
+        
+        function removeNewScreen(screenId) {
+            document.getElementById(screenId).remove();
+        }
+        
+        function addNewShow(screenId) {
+            const showsContainer = document.getElementById(`shows-container-${screenId}`);
+            const showCount = showsContainer.children.length;
+            const newShowId = `new-show-${screenId}-${showCount}`;
+            
+            const newShowHtml = `
+                <div class="show-row" id="${newShowId}">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="row g-2 w-100">
+                            <div class="col-md-6">
+                                <label class="form-label">Movie Title</label>
+                                <input type="text" class="form-control" name="newShows[${screenId}][${showCount}].movieTitle" placeholder="Movie Name" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Show Time</label>
+                                <input type="time" class="form-control" name="newShows[${screenId}][${showCount}].showTime" required>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeNewShow('${newShowId}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            showsContainer.insertAdjacentHTML('beforeend', newShowHtml);
+        }
+        
+        function removeNewShow(showId) {
+            document.getElementById(showId).remove();
+        }
+        
+        // Update preview on form changes
+        document.addEventListener('DOMContentLoaded', function() {
+            const formInputs = document.querySelectorAll('input, select');
+            formInputs.forEach(input => {
+                input.addEventListener('input', updatePreview);
+                input.addEventListener('change', updatePreview);
+            });
+            
+            // Initial preview update
+            updatePreview();
+            
+            // Generate initial seat layouts for existing screens
+            const existingScreens = document.querySelectorAll('[id^="screen-"]');
+            existingScreens.forEach(screen => {
+                const screenId = screen.id.replace('screen-', '');
+                const totalSeats = document.getElementById(`screen-${screenId}-seats-input`).value;
+                if (totalSeats) {
+                    generateSeatLayout(screenId, parseInt(totalSeats));
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="header">
+        <div class="container d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <a href="/theateradmin/theaterlistpage" class="text-white text-decoration-none">
+                    <h1 class="h3 m-0 fw-bold">🎬 Movie Booking</h1>
+                </a>
+                <span class="text-white-50">|</span>
+                <h2 class="h4 m-0 text-white-50">Edit Theater</h2>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <a class="btn btn-light btn-sm" th:href="@{/theateradmin/theaterlistpage}">Back to Theaters</a>
+                <a href="/auth/logout" class="btn btn-outline-danger btn-sm">
+                    <i class="fas fa-sign-out-alt me-1"></i>Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <form th:action="@{/theateradmin/updatetheater}" method="post" novalidate>
+            <input type="hidden" name="id" th:value="${theater.id}">
+            
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Theater Details -->
+                    <div class="card">
+                        <div class="card-body">
+                            <!-- Success/Error Messages -->
+                            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+                            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+                            
+                            <h5 class="card-title mb-3">Theater Details</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="theaterName" class="form-label">Theater Name</label>
+                                    <input id="theaterName" name="name" type="text" class="form-control" 
+                                           th:value="${theater.name}" placeholder="e.g., PVR Cinemas" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="city" class="form-label">City</label>
+                                    <select id="city" name="city" class="form-select" required>
+                                        <option value="" disabled>Select city</option>
+                                        <option value="MUMBAI" th:selected="${theater.city == 'MUMBAI'}">MUMBAI</option>
+                                        <option value="DELHI" th:selected="${theater.city == 'DELHI'}">DELHI</option>
+                                        <option value="BANGALORE" th:selected="${theater.city == 'BANGALORE'}">BANGALORE</option>
+                                        <option value="HYDERABAD" th:selected="${theater.city == 'HYDERABAD'}">HYDERABAD</option>
+                                        <option value="CHENNAI" th:selected="${theater.city == 'CHENNAI'}">CHENNAI</option>
+                                        <option value="KOLKATA" th:selected="${theater.city == 'KOLKATA'}">KOLKATA</option>
+                                        <option value="PUNE" th:selected="${theater.city == 'PUNE'}">PUNE</option>
+                                        <option value="AHMEDABAD" th:selected="${theater.city == 'AHMEDABAD'}">AHMEDABAD</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Screens Section -->
+                    <div class="card mt-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title mb-0">Screens</h5>
+                                <button type="button" class="btn btn-primary btn-sm" onclick="addNewScreen()">
+                                    <i class="fas fa-plus"></i> Add Screen
+                                </button>
+                            </div>
+                            
+                            <div id="screens-container">
+                                <div th:if="${theater.screens != null and !theater.screens.isEmpty()}">
+                                    <div class="screen-card" th:each="screen, screenStat : ${theater.screens}" th:id="'screen-' + ${screen.id}">
+                                        <!-- Hidden inputs for form submission -->
+                                        <input type="hidden" th:name="'screens[' + ${screenStat.index} + '].id'" th:value="${screen.id}">
+                                        <input type="hidden" th:name="'screens[' + ${screenStat.index} + '].name'" th:id="'screen-' + ${screen.id} + '-name-input'" th:value="${screen.name}">
+                                        <input type="hidden" th:name="'screens[' + ${screenStat.index} + '].totalSeats'" th:id="'screen-' + ${screen.id} + '-seats-input'" th:value="${screen.totalSeats}">
+                                        <input type="hidden" th:name="'screens[' + ${screenStat.index} + '].theaterId'" th:value="${theater.id}">
+                                        
+                                        <!-- Hidden inputs for seats -->
+                                        <div th:each="seat, seatStat : ${screen.seats}" class="hidden-inputs">
+                                            <input type="hidden" th:name="'screens[' + ${screenStat.index} + '].seats[' + ${seatStat.index} + '].id'" th:value="${seat.id}">
+                                            <input type="hidden" th:name="'screens[' + ${screenStat.index} + '].seats[' + ${seatStat.index} + '].seatNumber'" th:value="${seat.seatNumber}">
+                                            <input type="hidden" th:name="'screens[' + ${screenStat.index} + '].seats[' + ${seatStat.index} + '].rowNumber'" th:value="${seat.rowNumber}">
+                                            <input type="hidden" th:name="'screens[' + ${screenStat.index} + '].seats[' + ${seatStat.index} + '].isOccupied'" th:value="${seat.isOccupied}">
+                                            <input type="hidden" th:name="'screens[' + ${screenStat.index} + '].seats[' + ${seatStat.index} + '].screenId'" th:value="${screen.id}">
+                                        </div>
+                                        
+                                        <!-- View Mode -->
+                                        <div th:id="'screen-view-' + ${screen.id}">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <h6 class="mb-0" th:id="'screen-name-display-' + ${screen.id}" th:text="${'Screen ' + screen.name}">Screen Name</h6>
+                                                <div>
+                                                    <button type="button" class="btn btn-primary btn-sm" th:onclick="'toggleScreenEdit(' + ${screen.id} + ')'">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-danger btn-sm" th:onclick="'deleteScreen(' + ${screen.id} + ')'">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <span class="badge-muted" th:id="'screen-seats-display-' + ${screen.id}" th:text="${'Total Seats: ' + screen.totalSeats}">Total Seats</span>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <span class="badge-muted" th:text="${'Seats: ' + #lists.size(screen.seats)} + ' seats'">Seats</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Seat Layout Preview -->
+                                            <div class="mt-3">
+                                                <small class="text-muted">Seat Layout:</small>
+                                                <div id="seat-layout-${screen.id}"></div>
+                                            </div>
+                                            
+                                            <!-- Shows for this screen -->
+                                            <div class="mt-3" th:if="${screen.shows != null and !screen.shows.isEmpty()}">
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <small class="text-muted">Shows:</small>
+                                                    <button type="button" class="btn btn-primary btn-sm" th:onclick="'addNewShow(' + ${screen.id} + ')'">
+                                                        <i class="fas fa-plus"></i> Add Show
+                                                    </button>
+                                                </div>
+                                                <div th:id="'shows-container-' + ${screen.id}">
+                                                    <div class="show-row" th:each="show, showStat : ${screen.shows}" th:id="'show-' + ${show.id}">
+                                                        <!-- Hidden inputs for form submission -->
+                                                        <input type="hidden" th:name="'screens[' + ${screenStat.index} + '].shows[' + ${showStat.index} + '].id'" th:value="${show.id}">
+                                                        <input type="hidden" th:name="'screens[' + ${screenStat.index} + '].shows[' + ${showStat.index} + '].showTime'" th:id="'show-' + ${show.id} + '-time-input'" th:value="${show.showTime}">
+                                                        <input type="hidden" th:name="'screens[' + ${screenStat.index} + '].shows[' + ${showStat.index} + '].movieTitle'" th:id="'show-' + ${show.id} + '-movie-input'" th:value="${show.movie.title}">
+                                                        <input type="hidden" th:name="'screens[' + ${screenStat.index} + '].shows[' + ${showStat.index} + '].screenId'" th:value="${screen.id}">
+                                                        
+                                                        <!-- View Mode -->
+                                                        <div th:id="'show-view-' + ${show.id}">
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <span th:id="'show-display-' + ${show.id}" th:text="${show.movie.title + ' - ' + show.showTime}">Movie - Time</span>
+                                                                <div>
+                                                                    <button type="button" class="btn btn-primary btn-sm" th:onclick="'toggleShowEdit(' + ${show.id} + ')'">
+                                                                        <i class="fas fa-edit"></i>
+                                                                    </button>
+                                                                    <button type="button" class="btn btn-outline-danger btn-sm" th:onclick="'deleteShow(' + ${show.id} + ')'">
+                                                                        <i class="fas fa-trash"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <!-- Edit Mode -->
+                                                        <div th:id="'show-edit-' + ${show.id}" style="display: none;">
+                                                            <div class="row g-2">
+                                                                <div class="col-md-5">
+                                                                    <label class="form-label">Movie Title</label>
+                                                                    <input type="text" class="form-control" th:id="'show-movie-' + ${show.id}" th:value="${show.movie.title}" placeholder="Movie Name">
+                                                                </div>
+                                                                <div class="col-md-5">
+                                                                    <label class="form-label">Show Time</label>
+                                                                    <input type="time" class="form-control" th:id="'show-time-' + ${show.id}" th:value="${show.showTime}">
+                                                                </div>
+                                                                <div class="col-md-2">
+                                                                    <button type="button" class="btn btn-success btn-sm" th:onclick="'toggleShowEdit(' + ${show.id} + ')'">
+                                                                        <i class="fas fa-check"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Add Show button if no shows exist -->
+                                            <div class="mt-3" th:if="${screen.shows == null or screen.shows.isEmpty()}">
+                                                <button type="button" class="btn btn-primary btn-sm" th:onclick="'addNewShow(' + ${screen.id} + ')'">
+                                                    <i class="fas fa-plus"></i> Add First Show
+                                                </button>
+                                                <div th:id="'shows-container-' + ${screen.id}"></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Edit Mode -->
+                                        <div th:id="'screen-edit-' + ${screen.id}" style="display: none;">
+                                            <div class="row g-2">
+                                                <div class="col-md-5">
+                                                    <label class="form-label">Screen Name</label>
+                                                    <input type="text" class="form-control" th:id="'screen-name-' + ${screen.id}" th:value="${screen.name}" placeholder="Screen Name">
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <label class="form-label">Total Seats</label>
+                                                    <input type="number" class="form-control" th:id="'screen-seats-' + ${screen.id}" th:value="${screen.totalSeats}" min="1" max="200">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <button type="button" class="btn btn-success btn-sm" th:onclick="'toggleScreenEdit(' + ${screen.id} + ')'">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div th:if="${theater.screens == null or theater.screens.isEmpty()}" class="empty-tip">
+                                    <p>No screens added yet. Add your first screen to start scheduling shows.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Live Preview</h5>
+                            <div class="theater-preview">
+                                <div class="preview-title" id="preview-name">Theater Name</div>
+                                <div class="preview-item">
+                                    <span class="preview-label">City:</span>
+                                    <span class="preview-value" id="preview-city">Not selected</span>
+                                </div>
+                                <div class="preview-item">
+                                    <span class="preview-label">Screens:</span>
+                                    <span class="preview-value" th:text="${theater.screens != null ? #lists.size(theater.screens) : 0} + ' screens'">0 screens</span>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center">
+                                <small class="text-muted">Changes will be reflected in real-time</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <h6 class="card-title mb-3">Quick Actions</h6>
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-primary btn-sm" onclick="addNewScreen()">
+                                    <i class="fas fa-plus"></i> Add New Screen
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="d-flex justify-content-end gap-2">
+                        <a class="btn btn-outline-secondary" th:href="@{/theateradmin/theaterlistpage}">Cancel</a>
+                        <button type="submit" class="btn btn-success">Update Theater & All Data</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js"></script>
+</body>
+</html>

@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies in <span th:text="${selectedCity}">City</span> - Movie Booking</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #0f172a;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #e2e8f0;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .city-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .booking-history-btn {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .booking-history-btn:hover {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .login-btn:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 25px;
+            padding: 8px 16px;
+        }
+
+        .user-greeting {
+            color: #10b981;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(239, 68, 68, 0.3);
+        }
+        
+        .city-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 0 15px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin: 0;
+        }
+        
+        .see-all-link {
+            color: #f87171;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .see-all-link:hover {
+            color: #ef4444;
+            text-decoration: underline;
+        }
+        
+        .movie-card {
+            background: rgba(30, 41, 59, 0.95);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            height: 100%;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+        
+        .movie-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            border-color: rgba(129, 140, 248, 0.3);
+        }
+        
+        .movie-poster {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            background: linear-gradient(45deg, #334155, #475569);
+        }
+        
+        .movie-poster-placeholder {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+        
+        .movie-info {
+            padding: 15px;
+        }
+        
+        .movie-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+        
+        .movie-duration {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .movie-language {
+            display: inline-block;
+            background: rgba(51, 65, 85, 0.8);
+            color: #cbd5e1;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-top: 8px;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+        }
+        
+        .no-movies {
+            text-align: center;
+            padding: 60px 20px;
+            color: #94a3b8;
+        }
+        
+        .no-movies-icon {
+            font-size: 4rem;
+            color: #475569;
+            margin-bottom: 20px;
+        }
+        
+        .carousel-control {
+            background: #475569;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+        
+        .carousel-control:hover {
+            background: #64748b;
+            color: white;
+        }
+        
+        .carousel-control.prev {
+            left: -20px;
+        }
+        
+        .carousel-control.next {
+            right: -20px;
+        }
+        
+        .movies-container {
+            position: relative;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+            color: white;
+        }
+        
+        /* Login Modal Styles */
+        .login-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .login-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: rgba(30, 41, 59, 0.98);
+            border-radius: 20px;
+            padding: 40px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            padding: 5px;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: #ef4444;
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-icon {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 1.8rem;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #e2e8f0;
+            margin-bottom: 8px;
+        }
+
+        .modal-subtitle {
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+
+        .login-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .login-option {
+            background: rgba(51, 65, 85, 0.8);
+            border: 2px solid rgba(148, 163, 184, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-decoration: none;
+            color: #e2e8f0;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+        }
+
+        .login-option:hover {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: #10b981;
+            color: #e2e8f0;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.15);
+        }
+
+        .option-icon {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .login-option:hover .option-icon {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .option-content {
+            flex: 1;
+        }
+
+        .option-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #e2e8f0;
+        }
+
+        .option-description {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .option-arrow {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        .login-option:hover .option-arrow {
+            color: #10b981;
+            transform: translateX(5px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .city-title {
+                font-size: 1.5rem;
+            }
+            
+            .section-title {
+                font-size: 1.2rem;
+            }
+            
+            .movie-poster {
+                height: 250px;
+            }
+            
+            .movie-poster-placeholder {
+                height: 250px;
+                font-size: 2rem;
+            }
+
+            .header-actions {
+                gap: 10px;
+            }
+
+            .booking-history-btn {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+
+            .login-btn {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+
+            .user-info {
+                padding: 6px 12px;
+                gap: 10px;
+            }
+
+            .user-greeting {
+                font-size: 0.8rem;
+            }
+
+            .logout-btn {
+                padding: 4px 8px;
+                font-size: 0.7rem;
+            }
+
+            .modal-content {
+                padding: 30px 25px;
+                margin: 20px;
+            }
+
+            .modal-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with City Name -->
+    <div class="header">
+        <div class="container">
+            <div class="city-header">
+                <div class="d-flex align-items-center gap-3">
+                    <a href="/movies/moviesbycitypage" class="text-white text-decoration-none">
+                        <h1 class="h3 m-0 fw-bold">🎬 Movie Booking</h1>
+                    </a>
+                    <span class="text-white-50">|</span>
+                    <h2 class="city-title m-0">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        Movies in <span th:text="${selectedCity}">City</span>
+                    </h2>
+                </div>
+                <div class="header-actions">
+                    <!-- Show My Bookings Button if user is logged in -->
+                    <div th:if="${isLoggedIn}">
+                        <a href="/booking/bookinghistorypage" class="booking-history-btn">
+                            <i class="fas fa-history"></i>
+                            My Bookings
+                        </a>
+                    </div>
+                    
+                    <!-- Show Login Button if user is not logged in -->
+                    <div th:if="${!isLoggedIn}">
+                        <button class="login-btn" id="loginBtn">
+                            <i class="fas fa-user"></i>
+                            Login
+                        </button>
+                    </div>
+                    
+                    <!-- Show User Info and Logout if user is logged in -->
+                    <div th:if="${isLoggedIn}" class="user-info">
+                        <span class="user-greeting">
+                            <i class="fas fa-user-circle me-1"></i>
+                            Hi <span th:text="${userName}">Guest</span>!
+                        </span>
+                        <button class="logout-btn" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt me-1"></i>
+                            Logout
+                        </button>
+                    </div>
+                    
+                    <a href="/selectcity/cityselectionpage" class="back-btn">
+                        <i class="fas fa-arrow-left me-2"></i>Change City
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Error Message Alert -->
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show mb-4" role="alert" style="background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.3); color: #f8d7da; border-radius: 12px;">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <span th:text="${errorMessage}">Error message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="filter: invert(1);"></button>
+        </div>
+        
+        <!-- Recommended Movies Section -->
+        <div class="section-header">
+            <h2 class="section-title">Recommended Movies</h2>
+            <a href="#" class="see-all-link">See All ></a>
+        </div>
+        
+        <!-- Movies Grid -->
+        <div class="movies-container">
+            <div th:if="${movies != null and !movies.isEmpty()}" class="row">
+                <div th:each="movie : ${movies}" class="col-6 col-md-4 col-lg-3 mb-4">
+                                         <div class="movie-card" style="cursor: pointer;" th:data-movie-id="${movie.id}">
+                        <!-- Movie Poster -->
+                        <div th:if="${movie.imageUrl != null and !movie.imageUrl.isEmpty()}">
+                            <img th:src="${movie.imageUrl}" th:alt="${movie.title}" class="movie-poster">
+                        </div>
+                        <div th:unless="${movie.imageUrl != null and !movie.imageUrl.isEmpty()}" class="movie-poster-placeholder">
+                            <i class="fas fa-film"></i>
+                        </div>
+                        
+                                                 <!-- Movie Info -->
+                         <div class="movie-info">
+                             <h3 class="movie-title" th:text="${movie.title}">Movie Title</h3>
+                             <div class="movie-duration">
+                                 <i class="fas fa-clock"></i>
+                                 <span th:text="${movie.durationInMinutes + ' min'}">120 min</span>
+                             </div>
+                             <span class="movie-language" th:text="${movie.language}">ENGLISH</span>
+                         </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- No Movies Found -->
+            <div th:if="${movies == null or movies.isEmpty()}" class="no-movies">
+                <div class="no-movies-icon">
+                    <i class="fas fa-film"></i>
+                </div>
+                <h3>No Movies Found</h3>
+                <p>Sorry, no movies are currently available in <span th:text="${selectedCity}">this city</span>.</p>
+                <a href="/selectcity/cityselectionpage" class="btn btn-primary">
+                    <i class="fas fa-arrow-left me-2"></i>Try Another City
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="login-modal" id="loginModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModal">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <i class="fas fa-sign-in-alt"></i>
+                </div>
+                <h2 class="modal-title">Welcome Back</h2>
+                <p class="modal-subtitle">Choose your preferred login method to continue</p>
+            </div>
+            
+            <div class="login-options">
+                <!-- Email Login Option -->
+                <div class="login-option" id="emailLoginOption">
+                    <div class="option-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="option-content">
+                        <div class="option-title">Login with Email</div>
+                        <div class="option-description">Use your email and password to sign in</div>
+                    </div>
+                    <div class="option-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+                
+                <!-- Phone Number Login Option -->
+                <div class="login-option" id="phoneLoginOption">
+                    <div class="option-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div class="option-content">
+                        <div class="option-title">Login with Phone</div>
+                        <div class="option-description">Quick login using your phone number</div>
+                    </div>
+                    <div class="option-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add smooth scrolling and animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Login Modal Elements
+            const loginBtn = document.getElementById('loginBtn');
+            const loginModal = document.getElementById('loginModal');
+            const closeModal = document.getElementById('closeModal');
+            const emailLoginOption = document.getElementById('emailLoginOption');
+            const phoneLoginOption = document.getElementById('phoneLoginOption');
+            const logoutBtn = document.getElementById('logoutBtn');
+            
+            // Open Login Modal (only if elements exist)
+            if (loginBtn && loginModal) {
+                loginBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    loginModal.classList.add('active');
+                    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+                });
+            }
+            
+            // Close Modal Functions (only if elements exist)
+            function closeLoginModal() {
+                if (loginModal) {
+                    loginModal.classList.remove('active');
+                    document.body.style.overflow = 'auto'; // Restore scrolling
+                }
+            }
+            
+            // Close modal on X button click
+            if (closeModal) {
+                closeModal.addEventListener('click', closeLoginModal);
+            }
+            
+            // Close modal on backdrop click
+            if (loginModal) {
+                loginModal.addEventListener('click', function(e) {
+                    if (e.target === loginModal) {
+                        closeLoginModal();
+                    }
+                });
+            }
+            
+            // Close modal on Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && loginModal && loginModal.classList.contains('active')) {
+                    closeLoginModal();
+                }
+            });
+            
+            // Handle Email Login Option (only if element exists)
+            if (emailLoginOption) {
+                emailLoginOption.addEventListener('click', function() {
+                    console.log('Email login clicked - redirecting to login page');
+                    window.location.href = '/auth/loginpage';
+                });
+            }
+            
+            // Handle Phone Login Option (only if element exists)
+            if (phoneLoginOption) {
+                phoneLoginOption.addEventListener('click', function() {
+                    console.log('Phone login clicked - redirecting to phone login page');
+                    window.location.href = '/auth/phoneloginpage';
+                });
+            }
+
+            // Handle Logout (only if element exists)
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    console.log('Logout clicked - logging out user');
+                    // Clear session and redirect to login page
+                    window.location.href = '/auth/logout';
+                });
+            }
+            
+            // Animate movie cards on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('.movie-card').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+        });
+        
+        document.querySelectorAll('.movie-card').forEach(card => {
+    card.addEventListener('click', function() {
+        const movieId = this.getAttribute('data-movie-id');
+        const today = new Date().toISOString().split('T')[0]; // yyyy-MM-dd format
+        if (movieId) {
+            window.location.href = '/movies/moviedetailspage?movieId=' + movieId + '&date=' + today;
+        }
+    });
+});
+
+    </script>
+</body>
+</html>
