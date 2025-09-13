@@ -58,10 +58,10 @@ public class MovieCacheService {
     // It will save movie to database and delete movie from cache
     @Caching(evict = {
             @CacheEvict(value = "allMovies", allEntries = true), // list may be stale
-            @CacheEvict(value = "moviesByCity", key = "#city"), // only this city
+            @CacheEvict(value = "moviesByCity", allEntries = true), // only this city
             @CacheEvict(value = "theatersByAdmin", allEntries = true),
     })
-    public void saveMovie(Movie movie, String city) {
+    public void saveMovie(Movie movie) {
         movieRepository.save(movie);
     }
 

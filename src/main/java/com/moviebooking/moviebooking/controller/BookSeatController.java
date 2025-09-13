@@ -20,10 +20,10 @@ public class BookSeatController {
         this.bookingSeatsService = bookingSeatsService;
     }
 
-    //This is a scheduled task that will cancel the booking of pending seats after 10 minutes
+   /*  //This is a scheduled task that will cancel the booking of pending seats after 10 minutes
     @Scheduled(fixedDelay = AppConstants.CANCEL_BOOKING_EXPIRY_TIME)
     public void cancelBookingOfPending() {
         log.info("Cancelling booking");
         bookingSeatsService.cancelBookingOfPending();
-    }
+    } */
 }

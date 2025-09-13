@@ -56,9 +56,7 @@ public class MovieController {
     // movie-list page
     @PostMapping(MOVIE_LIST_BY_CITY_PAGE_URL)
     public String viewMoviesListByCity(@RequestParam String city, Model model, HttpSession session) {
-        log.info("City selected: {}", city);
         List<MovieResponseDto> movies = movieService.getMoviesByCity(city);
-        log.info("Movies found: {}", movies.size());
         model.addAttribute("movies", movies);
         model.addAttribute("selectedCity", city);
         session.setAttribute("selectedCity", city);

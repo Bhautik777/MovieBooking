@@ -37,9 +37,8 @@ public class MovieService {
         // Convert MovieCreateDto to Movie
         Movie movieEntity = convertMovieCreateDtoToMovie(movie);
         // Save Movie
-        movieCacheService.saveMovie(movieEntity, movie.getShows().get(0).getTheater().getCity());
+        movieCacheService.saveMovie(movieEntity);
     }
-
 
     public List<MovieResponseDto> getMovies() {
         // Get all movies from database
@@ -57,10 +56,12 @@ public class MovieService {
     }
 
     public List<MovieResponseDto> getMoviesByCity(String city) {
-        //get all the movies from the database by city
+        // get all the movies from the database by city
         List<Movie> movies = movieCacheService.getMoviesByCity(city);
+        log.info("Movies from cache: {}", movies);
+        log.info("Movies from database: {}", movies.size());
         List<MovieResponseDto> movieResponseDtos = new ArrayList<>();
-        //convert the movies to MovieResponseDto
+        // convert the movies to MovieResponseDto
         movies.forEach(movie -> {
             MovieResponseDto movieResponseDto = convertMovieToMovieResponseDto(movie);
             movieResponseDtos.add(movieResponseDto);
@@ -76,7 +77,7 @@ public class MovieService {
         return convertMovieToMovieResponseDto(movie);
     }
 
-    //Here we are getting the theater and show by movie and city and date
+    // Here we are getting the theater and show by movie and city and date
     public Map<Theater, List<Show>> getTheaterAndShowByMovieAndCity(String city, Long movieId, LocalDate date) {
         log.info("Getting theater and show by movie and city and date: {}, {}, {}", city, movieId, date);
         // Here i have used LinkedHashMap to maintain the order of the theaters and
@@ -91,7 +92,7 @@ public class MovieService {
         List<Show> topTheaterShow = new ArrayList<>();
         Theater topTheater = null;
 
-        //Here we are getting the top theater and show
+        // Here we are getting the top theater and show
         for (Show show : shows) {
             if (show.getTheater().getName().contains("INOX")) {
                 topTheaterShow.add(show);
@@ -102,7 +103,7 @@ public class MovieService {
         if (topTheater != null)
             theatersAndShows.put(topTheater, topTheaterShow);
 
-        //Here we are getting the other theaters and shows
+        // Here we are getting the other theaters and shows
         for (Show show : shows) {
             Theater currentTheater = show.getTheater();
 

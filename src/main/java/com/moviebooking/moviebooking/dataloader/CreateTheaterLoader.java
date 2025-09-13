@@ -82,7 +82,7 @@ public class CreateTheaterLoader implements CommandLineRunner {
          */
 
        
-        deleteBookedTickets();
+        //deleteBookedTickets();
        /*  deleteAll();
         
         createAdminForMovieCreator();
